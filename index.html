@@ -1,0 +1,1494 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Atelier 1 : Histoire de l'IA</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #1a4d2e 0%, #2d5f3f 50%, #3d7552 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: #333;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(74, 175, 115, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(52, 152, 94, 0.3) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(93, 196, 138, 0.2) 0%, transparent 50%);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 25px;
+            padding: 50px 40px;
+            text-align: center;
+            box-shadow: 0 25px 80px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.1);
+            margin-bottom: 40px;
+            animation: slideDown 0.6s ease-out;
+            border: 1px solid rgba(74, 175, 115, 0.2);
+        }
+
+        h1 {
+            background: linear-gradient(135deg, #2d8659 0%, #4aaf73 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 2.8em;
+            margin-bottom: 15px;
+            font-weight: 800;
+        }
+
+        .subtitle {
+            color: #666;
+            font-size: 1.3em;
+            font-weight: 300;
+        }
+
+        .objectives {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 25px;
+            padding: 35px;
+            margin-bottom: 40px;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,255,255,0.1);
+            animation: fadeIn 0.8s ease-out;
+            border: 1px solid rgba(139, 92, 246, 0.2);
+        }
+
+        .objectives h2 {
+            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.8em;
+        }
+
+        .objectives ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .objectives li {
+            padding: 10px 0;
+            padding-left: 30px;
+            position: relative;
+        }
+
+        .objectives li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: #667eea;
+            font-weight: bold;
+            font-size: 1.2em;
+        }
+
+        .timeline-game {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 25px;
+            padding: 45px;
+            box-shadow: 0 25px 80px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.1);
+            margin-bottom: 40px;
+            border: 1px solid rgba(139, 92, 246, 0.2);
+        }
+
+        .timeline-game h2 {
+            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 30px;
+            text-align: center;
+            font-size: 2em;
+        }
+
+        .instruction {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 25px;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1));
+            border-radius: 15px;
+            color: #555;
+            line-height: 1.8;
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.1);
+        }
+
+        .timeline-container {
+            position: relative;
+            padding: 40px 0;
+            margin-bottom: 40px;
+        }
+
+        .timeline-line {
+            position: absolute;
+            top: 60px;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+
+        .drop-zones {
+            display: flex;
+            justify-content: space-between;
+            position: relative;
+            z-index: 2;
+        }
+
+        .drop-zone {
+            width: 140px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .year-label {
+            font-size: 1.4em;
+            font-weight: 700;
+            background: linear-gradient(135deg, #2d8659 0%, #4aaf73 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 15px;
+            padding: 12px;
+            background-color: white;
+            background-image: linear-gradient(135deg, #2d8659 0%, #4aaf73 100%);
+            -webkit-background-clip: text;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(74, 175, 115, 0.2);
+            z-index: 3;
+            position: relative;
+            border: 2px solid rgba(74, 175, 115, 0.3);
+        }
+
+        .drop-area {
+            width: 100%;
+            min-height: 150px;
+            border: 3px dashed rgba(74, 175, 115, 0.5);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(248, 252, 250, 0.8);
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+            padding: 10px;
+            text-align: center;
+            color: #999;
+            font-size: 0.85em;
+        }
+
+        .drop-area.over {
+            background: rgba(232, 245, 238, 0.9);
+            border-color: #34985e;
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(52, 152, 94, 0.3);
+        }
+
+        .drop-area.filled {
+            background: rgba(255, 255, 255, 0.95);
+            border-color: #2d8659;
+            border-style: solid;
+            box-shadow: 0 8px 25px rgba(45, 134, 89, 0.2);
+        }
+
+        .draggable-cards {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            margin: 40px 0;
+            padding: 35px;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.08), rgba(118, 75, 162, 0.08));
+            border-radius: 20px;
+            border: 1px solid rgba(139, 92, 246, 0.2);
+            backdrop-filter: blur(10px);
+        }
+
+        .draggable {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 2px solid rgba(102, 126, 234, 0.3);
+            border-radius: 15px;
+            padding: 22px;
+            cursor: move;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            max-width: 280px;
+            text-align: center;
+        }
+
+        .draggable .icon {
+            font-size: 2.2em;
+            margin-bottom: 12px;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+        }
+
+        .draggable .event-text {
+            font-size: 0.95em;
+            color: #555;
+            line-height: 1.6;
+        }
+
+        .draggable:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.3);
+            border-color: #667eea;
+        }
+
+        .draggable.dragging {
+            opacity: 0.5;
+        }
+
+        .draggable.placed {
+            display: none;
+        }
+
+        .check-button {
+            display: block;
+            margin: 30px auto;
+            padding: 18px 55px;
+            font-size: 1.2em;
+            font-weight: 600;
+            background: linear-gradient(135deg, #2d8659, #4aaf73);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 15px 40px rgba(74, 175, 115, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .check-button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+
+        .check-button:hover::before {
+            left: 100%;
+        }
+
+        .check-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 20px 50px rgba(74, 175, 115, 0.5);
+        }
+
+        .check-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .result {
+            text-align: center;
+            font-size: 1.3em;
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 15px;
+            display: none;
+        }
+
+        .result.success {
+            background: #d4edda;
+            color: #155724;
+            display: block;
+        }
+
+        .result.error {
+            background: #f8d7da;
+            color: #721c24;
+            display: block;
+        }
+
+        .reflection-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px);
+            border-radius: 25px;
+            padding: 45px;
+            box-shadow: 0 25px 80px rgba(0,0,0,0.4), 0 0 0 1px rgba(255,255,255,0.1);
+            margin-bottom: 40px;
+            display: none;
+            border: 1px solid rgba(139, 92, 246, 0.2);
+        }
+
+        .reflection-section.visible {
+            display: block;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        .reflection-section h2 {
+            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 30px;
+            text-align: center;
+            font-size: 2em;
+        }
+
+        .matching-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin: 30px 0;
+        }
+
+        .matching-events, .matching-questions {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .event-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 16px;
+            border-radius: 12px;
+            border: 2px solid rgba(102, 126, 234, 0.2);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+            position: relative;
+        }
+
+        .event-card:hover {
+            transform: translateX(5px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.25);
+            border-color: #667eea;
+        }
+
+        .event-card.selected {
+            border-color: #667eea;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.15), rgba(118, 75, 162, 0.15));
+            transform: scale(1.02);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .event-icon {
+            font-size: 1.8em;
+            margin-bottom: 8px;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+        }
+
+        .event-title {
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 6px;
+            font-size: 0.95em;
+        }
+
+        .event-desc {
+            font-size: 0.85em;
+            color: #666;
+            line-height: 1.4;
+        }
+
+        .info-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 28px;
+            height: 28px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+        }
+
+        .info-btn:hover {
+            transform: scale(1.15);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: slideDown 0.4s ease-out;
+            position: relative;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 2em;
+            cursor: pointer;
+            color: #999;
+            transition: all 0.3s ease;
+            background: none;
+            border: none;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-close:hover {
+            color: #667eea;
+            transform: rotate(90deg);
+        }
+
+        .modal-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .modal-icon {
+            font-size: 3em;
+        }
+
+        .modal-title {
+            flex: 1;
+        }
+
+        .modal-title h3 {
+            color: #667eea;
+            font-size: 1.8em;
+            margin-bottom: 5px;
+        }
+
+        .modal-title .year {
+            color: #999;
+            font-size: 1.1em;
+        }
+
+        .modal-body {
+            line-height: 1.8;
+            color: #555;
+        }
+
+        .modal-body h4 {
+            color: #764ba2;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+
+        .modal-body p {
+            margin-bottom: 15px;
+        }
+
+        .modal-body ul {
+            margin: 15px 0;
+            padding-left: 20px;
+        }
+
+        .modal-body li {
+            margin-bottom: 8px;
+        }
+
+        .question-match {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 18px;
+            border-radius: 12px;
+            border: 2px solid rgba(52, 152, 94, 0.2);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+            line-height: 1.5;
+            font-size: 0.9em;
+        }
+
+        .question-match:hover {
+            transform: translateX(-5px);
+            box-shadow: 0 8px 25px rgba(52, 152, 94, 0.25);
+            border-color: #34985e;
+        }
+
+        .question-match.selected {
+            border-color: #34985e;
+            background: linear-gradient(135deg, rgba(52, 152, 94, 0.15), rgba(74, 175, 115, 0.15));
+            transform: scale(1.02);
+            box-shadow: 0 8px 25px rgba(52, 152, 94, 0.4);
+        }
+
+        .question-match strong {
+            background: linear-gradient(135deg, #34985e 0%, #2d8659 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: block;
+            margin-bottom: 8px;
+            font-size: 1em;
+        }: blur(10px);
+            padding: 18px;
+            border-radius: 12px;
+            border: 2px solid rgba(118, 75, 162, 0.2);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+            line-height: 1.5;
+            font-size: 0.9em;
+        }
+
+        .question-match:hover {
+            transform: translateX(-5px);
+            box-shadow: 0 8px 25px rgba(118, 75, 162, 0.25);
+            border-color: #764ba2;
+        }
+
+        .question-match.selected {
+            border-color: #764ba2;
+            background: linear-gradient(135deg, rgba(118, 75, 162, 0.15), rgba(102, 126, 234, 0.15));
+            transform: scale(1.02);
+            box-shadow: 0 8px 25px rgba(118, 75, 162, 0.4);
+        }
+
+        .question-match.correct {
+            border-color: #28a745;
+            background: linear-gradient(135deg, rgba(40, 167, 69, 0.15), rgba(40, 167, 69, 0.05));
+            box-shadow: 0 6px 20px rgba(40, 167, 69, 0.3);
+        }
+
+        .question-match.incorrect {
+            border-color: #dc3545;
+            background: linear-gradient(135deg, rgba(220, 53, 69, 0.15), rgba(220, 53, 69, 0.05));
+            box-shadow: 0 6px 20px rgba(220, 53, 69, 0.3);
+        }
+
+        .question-match strong {
+            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            display: block;
+            margin-bottom: 8px;
+            font-size: 1em;
+        }
+
+        .synthesis-section {
+            margin-top: 40px;
+            padding: 35px;
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.12), rgba(118, 75, 162, 0.12));
+            border-radius: 20px;
+            animation: fadeIn 0.8s ease-out;
+            border: 1px solid rgba(139, 92, 246, 0.3);
+            backdrop-filter: blur(10px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.2);
+        }
+
+        .event-card.paired-1 { border-color: #FF6B6B; border-width: 3px; }
+        .event-card.paired-2 { border-color: #4ECDC4; border-width: 3px; }
+        .event-card.paired-3 { border-color: #FFD93D; border-width: 3px; }
+        .event-card.paired-4 { border-color: #A8E6CF; border-width: 3px; }
+        .event-card.paired-5 { border-color: #FF8B94; border-width: 3px; }
+        .event-card.paired-6 { border-color: #95B8D1; border-width: 3px; }
+
+        .question-match.paired-1 { border-color: #FF6B6B; border-width: 3px; }
+        .question-match.paired-2 { border-color: #4ECDC4; border-width: 3px; }
+        .question-match.paired-3 { border-color: #FFD93D; border-width: 3px; }
+        .question-match.paired-4 { border-color: #A8E6CF; border-width: 3px; }
+        .question-match.paired-5 { border-color: #FF8B94; border-width: 3px; }
+        .question-match.paired-6 { border-color: #95B8D1; border-width: 3px; }
+
+        .textarea-response {
+            width: 100%;
+            min-height: 100px;
+            padding: 15px;
+            border: 2px solid #667eea;
+            border-radius: 10px;
+            font-family: inherit;
+            font-size: 1em;
+            resize: vertical;
+            margin-top: 10px;
+        }
+
+        .validate-reflection {
+            display: block;
+            margin: 30px auto;
+            padding: 15px 40px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .validate-reflection:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
+        }
+
+        .copy-button {
+            display: block;
+            margin: 20px auto;
+            padding: 15px 40px;
+            background: linear-gradient(135deg, #28a745, #20c997);
+            color: white;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(40, 167, 69, 0.3);
+        }
+
+        .copy-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(40, 167, 69, 0.4);
+        }
+
+        .bilan-section {
+            background: linear-gradient(135deg, #2d8659, #4aaf73);
+            border-radius: 25px;
+            padding: 50px;
+            box-shadow: 0 25px 80px rgba(0,0,0,0.4);
+            color: white;
+            text-align: center;
+            display: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .bilan-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: rotate 20s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .bilan-section.visible {
+            display: block;
+            animation: slideDown 0.8s ease-out;
+        }
+
+        .bilan-section h2 {
+            font-size: 2.3em;
+            margin-bottom: 25px;
+            position: relative;
+            z-index: 1;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        }
+
+        .bilan-content {
+            background: rgba(255,255,255,0.15);
+            border-radius: 20px;
+            padding: 35px;
+            margin-top: 30px;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255,255,255,0.2);
+            position: relative;
+            z-index: 1;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+
+        .bilan-content p {
+            font-size: 1.1em;
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+            margin-top: 30px;
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(255,255,255,0.2);
+            position: relative;
+            z-index: 1;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+            margin-top: 30px;
+            backdrop-filter: blur(10px);
+        }
+
+        .bilan-content p {
+            font-size: 1.1em;
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+
+        .download-btn {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 15px 40px;
+            background: white;
+            color: #667eea;
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .download-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @media (max-width: 968px) {
+            .matching-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🧩 Atelier 1 : Le saviez-vous ?</h1>
+            <p class="subtitle">Les grandes étapes de l'Intelligence Artificielle</p>
+        </header>
+
+        <div class="objectives">
+            <h2>🎯 Objectifs de l'atelier</h2>
+            <ul>
+                <li>Découvrir les grandes étapes de l'histoire de l'IA</li>
+                <li>Situer l'évolution des technologies et leur lien avec l'éducation et la société</li>
+                <li>Produire une frise chronologique collective en mode jeu</li>
+            </ul>
+        </div>
+
+        <div class="timeline-game">
+            <h2>🎲 Reconstituez la frise chronologique</h2>
+            <div class="instruction">
+                <strong>📍 Consigne :</strong> Glissez-déposez chaque événement sur la bonne date de la frise chronologique. 
+                Réfléchissez à l'ordre logique de l'évolution de l'intelligence artificielle !
+            </div>
+            
+            <div class="timeline-container">
+                <div class="timeline-line"></div>
+                <div class="drop-zones" id="dropZones">
+                    <div class="drop-zone">
+                        <div class="year-label">1950</div>
+                        <div class="drop-area" data-year="1950">Déposez ici</div>
+                    </div>
+                    <div class="drop-zone">
+                        <div class="year-label">1956</div>
+                        <div class="drop-area" data-year="1956">Déposez ici</div>
+                    </div>
+                    <div class="drop-zone">
+                        <div class="year-label">1966</div>
+                        <div class="drop-area" data-year="1966">Déposez ici</div>
+                    </div>
+                    <div class="drop-zone">
+                        <div class="year-label">1997</div>
+                        <div class="drop-area" data-year="1997">Déposez ici</div>
+                    </div>
+                    <div class="drop-zone">
+                        <div class="year-label">2011</div>
+                        <div class="drop-area" data-year="2011">Déposez ici</div>
+                    </div>
+                    <div class="drop-zone">
+                        <div class="year-label">2016</div>
+                        <div class="drop-area" data-year="2016">Déposez ici</div>
+                    </div>
+                    <div class="drop-zone">
+                        <div class="year-label">2022</div>
+                        <div class="drop-area" data-year="2022">Déposez ici</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="draggable-cards" id="draggableCards">
+                <div class="draggable" draggable="true" data-year="2022">
+                    <div class="icon">🚀</div>
+                    <div class="event-text">Explosion des IA génératives : ChatGPT, DALL·E, MidJourney</div>
+                </div>
+                <div class="draggable" draggable="true" data-year="1966">
+                    <div class="icon">💬</div>
+                    <div class="event-text">ELIZA : premier chatbot simulant une psychothérapeute</div>
+                </div>
+                <div class="draggable" draggable="true" data-year="2011">
+                    <div class="icon">🎮</div>
+                    <div class="event-text">Watson d'IBM remporte le jeu télévisé Jeopardy!</div>
+                </div>
+                <div class="draggable" draggable="true" data-year="1950">
+                    <div class="icon">🤔</div>
+                    <div class="event-text">Test de Turing : Alan Turing propose un test pour évaluer si une machine peut « penser »</div>
+                </div>
+                <div class="draggable" draggable="true" data-year="2016">
+                    <div class="icon">🎯</div>
+                    <div class="event-text">AlphaGo bat le champion du monde de Go</div>
+                </div>
+                <div class="draggable" draggable="true" data-year="1997">
+                    <div class="icon">♟️</div>
+                    <div class="event-text">Deep Blue bat Garry Kasparov, champion du monde d'échecs</div>
+                </div>
+                <div class="draggable" draggable="true" data-year="1956">
+                    <div class="icon">🎓</div>
+                    <div class="event-text">Conférence de Dartmouth : naissance officielle du terme « Intelligence Artificielle »</div>
+                </div>
+            </div>
+
+            <button class="check-button" onclick="checkAnswers()">Vérifier mes réponses</button>
+            <div class="result" id="result"></div>
+        </div>
+
+        <div class="reflection-section" id="reflectionSection">
+            <h2>💭 De l'histoire aux enjeux : Que nous disent ces étapes ?</h2>
+            <p style="text-align: center; color: #666; margin-bottom: 40px; font-size: 1.1em;">
+                Chaque avancée technologique soulève des questions pédagogiques et éthiques. 
+                Associez chaque événement historique aux questionnements qu'il fait écho aujourd'hui dans votre classe.
+            </p>
+
+            <div class="matching-container" id="matchingContainer">
+                <div class="matching-events">
+                    <h3 style="color: #667eea; margin-bottom: 20px;">📅 Événements historiques</h3>
+                    <div class="event-card" data-event="watson">
+                        <button class="info-btn" onclick="event.stopPropagation(); openModal('watson')">i</button>
+                        <div class="event-icon">🎮</div>
+                        <div class="event-title">Watson (2011)</div>
+                        <div class="event-desc">Maîtrise du langage et de la culture</div>
+                    </div>
+                    <div class="event-card" data-event="turing">
+                        <button class="info-btn" onclick="event.stopPropagation(); openModal('turing')">i</button>
+                        <div class="event-icon">🤔</div>
+                        <div class="event-title">Test de Turing (1950)</div>
+                        <div class="event-desc">Une machine peut-elle penser ?</div>
+                    </div>
+                    <div class="event-card" data-event="generative">
+                        <button class="info-btn" onclick="event.stopPropagation(); openModal('generative')">i</button>
+                        <div class="event-icon">🚀</div>
+                        <div class="event-title">IA génératives (2022)</div>
+                        <div class="event-desc">Production automatique de contenus</div>
+                    </div>
+                    <div class="event-card" data-event="deepblue">
+                        <button class="info-btn" onclick="event.stopPropagation(); openModal('deepblue')">i</button>
+                        <div class="event-icon">♟️</div>
+                        <div class="event-title">Deep Blue (1997)</div>
+                        <div class="event-desc">L'IA bat un champion humain</div>
+                    </div>
+                    <div class="event-card" data-event="eliza">
+                        <button class="info-btn" onclick="event.stopPropagation(); openModal('eliza')">i</button>
+                        <div class="event-icon">💬</div>
+                        <div class="event-title">ELIZA (1966)</div>
+                        <div class="event-desc">Premier chatbot conversationnel</div>
+                    </div>
+                    <div class="event-card" data-event="alphago">
+                        <button class="info-btn" onclick="event.stopPropagation(); openModal('alphago')">i</button>
+                        <div class="event-icon">🎯</div>
+                        <div class="event-title">AlphaGo (2016)</div>
+                        <div class="event-desc">Apprentissage par la donnée massive</div>
+                    </div>
+                </div>
+
+                <div class="matching-questions">
+                    <h3 style="color: #764ba2; margin-bottom: 20px;">❓ Questionnements pédagogiques & éthiques</h3>
+                    <div class="question-match" data-answer="deepblue" onclick="selectQuestion(this)">
+                        <strong>🎯 Motivation & Excellence redéfinies</strong>
+                        Si l'IA excelle dans certains domaines, comment maintenir la <em>motivation</em> des élèves ? Que devient la notion de « performance » et d'<em>excellence</em> ? Comment réorienter l'<em>engagement</em> vers des compétences humaines irremplaçables : <em>créativité</em>, <em>collaboration</em>, <em>résolution de problèmes complexes</em> ?
+                    </div>
+                    <div class="question-match" data-answer="generative" onclick="selectQuestion(this)">
+                        <strong>✍️ Création, authenticité & plagiat</strong>
+                        Face aux outils de génération automatique, comment <em>évaluer l'authenticité</em> du travail ? Comment repenser nos pratiques d'<em>évaluation</em> ? Comment intégrer ces outils en classe de manière <em>éthique</em> et <em>pédagogique</em> pour développer la <em>créativité</em> et l'<em>esprit critique</em> plutôt que la substitution ?
+                    </div>
+                    <div class="question-match" data-answer="turing" onclick="selectQuestion(this)">
+                        <strong>🔍 Esprit critique & Discernement</strong>
+                        Comment développer chez les élèves la capacité à identifier ce qui est produit par une machine vs un humain ? Comment former leur <em>esprit critique</em> face aux contenus générés automatiquement ? Quel rôle pour l'enseignant dans cette nouvelle compétence de <em>vérification</em> ?
+                    </div>
+                    <div class="question-match" data-answer="alphago" onclick="selectQuestion(this)">
+                        <strong>🔐 Données, vie privée & éthique</strong>
+                        L'IA apprend grâce aux données massives. Comment sensibiliser les élèves à la protection de leur <em>vie privée</em> et à l'<em>éthique</em> de l'usage des données ? Comment aborder les questions de <em>biais algorithmiques</em>, de <em>transparence</em> et de <em>responsabilité</em> dans l'usage de l'IA ?
+                    </div>
+                    <div class="question-match" data-answer="watson" onclick="selectQuestion(this)">
+                        <strong>📝 Évaluation & Raisonnement</strong>
+                        L'IA peut répondre vite et bien, mais peut-elle <em>raisonner</em>, <em>nuancer</em>, <em>créer</em> ? Comment <em>évaluer</em> autrement que par la simple « bonne réponse » ? Quelles nouvelles modalités d'<em>évaluation</em> pour valoriser le <em>processus</em>, la <em>réflexion</em> et l'<em>argumentation</em> ?
+                    </div>
+                    <div class="question-match" data-answer="eliza" onclick="selectQuestion(this)">
+                        <strong>💬 Langage, sens et compréhension</strong>
+                        Comment faire comprendre aux élèves qu'un chatbot simule sans comprendre ? Quelle est la place de l'<em>intention</em>, du <em>sens</em> et de l'<em>interprétation</em> dans l'apprentissage ? Comment valoriser la <em>nuance</em> et la <em>contextualisation</em> que seul l'humain peut apporter ?
+                    </div>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin: 40px 0;">
+                <button class="check-button" onclick="checkMatching()">Vérifier mes associations</button>
+                <div class="result" id="matchingResult"></div>
+            </div>
+
+            <div class="synthesis-section" id="synthesisSection" style="display: none;">
+                <h3 style="color: #764ba2; margin-bottom: 20px; text-align: center;">✍️ Synthèse collective</h3>
+                <p style="text-align: center; margin-bottom: 20px; color: #666;">
+                    Rédigez votre synthèse à partager sur le Digipad de la formation :
+                </p>
+                <div style="background: rgba(248, 249, 255, 0.8); padding: 30px; border-radius: 15px; border-left: 5px solid #667eea;">
+                    <p style="font-size: 1.15em; color: #667eea; font-weight: 600; margin-bottom: 15px;">
+                        « Avec l'émergence des IA génératives, nous devons, en tant qu'enseignants, faire face à...
+                    </p>
+                    <textarea class="textarea-response" id="collectiveSynthesis" placeholder="Continuez votre réflexion ici... Quels défis ? Quelles opportunités ? Quelles nouvelles compétences à développer ?"></textarea>
+                </div>
+                <button class="validate-reflection" onclick="validateReflection()">Valider ma synthèse</button>
+                <button class="copy-button" id="copyButton" style="display: none;" onclick="copyToClipboard()">📋 Copier le texte pour le Digipad</button>
+                <div id="copyFeedback" style="display: none; text-align: center; margin-top: 15px; color: #28a745; font-weight: bold;">
+                    ✅ Texte copié ! Vous pouvez maintenant le coller sur le Digipad
+                </div>
+            </div>
+        </div>
+
+        <div class="bilan-section" id="bilanSection">
+            <h2>🎉 Bravo, atelier terminé !</h2>
+            <div class="bilan-content">
+                <p><strong>Vous avez complété l'atelier sur l'histoire de l'IA !</strong></p>
+                <p>Vous avez découvert les grandes étapes qui ont marqué l'évolution de l'intelligence artificielle et réfléchi à leur impact sur l'éducation.</p>
+                <p><strong>Points clés à retenir :</strong></p>
+                <p>✓ L'IA est passée d'une curiosité scientifique à un outil du quotidien</p>
+                <p>✓ Chaque avancée technologique transforme notre rapport à l'apprentissage</p>
+                <p>✓ L'arrivée des IA génératives invite à repenser nos pratiques pédagogiques</p>
+                <p>✓ Les compétences essentielles : esprit critique, créativité, éthique, collaboration</p>
+                <p style="margin-top: 30px; font-style: italic;">« La technologie évolue, mais le rôle de l'enseignant reste central : guider, inspirer et développer l'esprit critique. »</p>
+            </div>
+        </div>
+
+        <!-- Modal pour les détails -->
+        <div class="modal" id="infoModal">
+            <div class="modal-content">
+                <button class="modal-close" onclick="closeModal()">×</button>
+                <div id="modalContent"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const eventDetails = {
+            turing: {
+                icon: '🤔',
+                title: 'Le Test de Turing',
+                year: '1950',
+                content: `
+                    <h4>📖 Contexte historique</h4>
+                    <p>En 1950, le mathématicien britannique Alan Turing publie un article fondateur : "Computing Machinery and Intelligence". Il y pose une question révolutionnaire : "Les machines peuvent-elles penser ?"</p>
+                    
+                    <h4>🔍 Qu'est-ce que le test de Turing ?</h4>
+                    <p>Le test propose un protocole expérimental : un évaluateur humain dialogue à l'aveugle avec deux interlocuteurs (un humain et une machine). Si l'évaluateur ne peut pas déterminer lequel est la machine, alors on peut considérer que la machine "pense".</p>
+                    
+                    <h4>💡 Impact et héritage</h4>
+                    <ul>
+                        <li>Première formalisation de l'intelligence artificielle avant même que le terme n'existe</li>
+                        <li>Déplace la question métaphysique "qu'est-ce que penser ?" vers une question opérationnelle "comment le détecter ?"</li>
+                        <li>Reste une référence aujourd'hui pour évaluer les chatbots et IA conversationnelles</li>
+                    </ul>
+                    
+                    <h4>🏫 Et en classe ?</h4>
+                    <p>Ce test nous invite à développer chez les élèves la capacité à distinguer le vrai du faux, l'humain du synthétique, dans un monde où les contenus générés automatiquement se multiplient.</p>
+                `
+            },
+            eliza: {
+                icon: '💬',
+                title: 'ELIZA - Le premier chatbot',
+                year: '1966',
+                content: `
+                    <h4>📖 Contexte historique</h4>
+                    <p>ELIZA est un programme informatique créé par Joseph Weizenbaum au MIT entre 1964 et 1966. C'est le premier chatbot de l'histoire, conçu pour simuler une conversation avec un psychothérapeute rogérien.</p>
+                    
+                    <h4>🔍 Comment ça marchait ?</h4>
+                    <p>ELIZA utilisait des techniques de reconnaissance de mots-clés et de reformulation. Par exemple, si vous disiez "Je suis triste", ELIZA répondait "Pourquoi êtes-vous triste ?". Simple mais efficace !</p>
+                    
+                    <h4>💡 Impact et paradoxe</h4>
+                    <ul>
+                        <li>Beaucoup d'utilisateurs ont développé un attachement émotionnel à ELIZA</li>
+                        <li>Weizenbaum lui-même a été choqué par cette réaction : ELIZA ne comprenait rien !</li>
+                        <li>Met en lumière notre tendance à anthropomorphiser les machines</li>
+                    </ul>
+                    
+                    <h4>🏫 Et en classe ?</h4>
+                    <p>ELIZA nous rappelle qu'un chatbot peut simuler la conversation sans rien comprendre. Important pour enseigner aux élèves la différence entre simulation et compréhension, entre forme et sens.</p>
+                `
+            },
+            deepblue: {
+                icon: '♟️',
+                title: 'Deep Blue bat Kasparov',
+                year: '1997',
+                content: `
+                    <h4>📖 Contexte historique</h4>
+                    <p>Le 11 mai 1997, l'ordinateur Deep Blue d'IBM bat le champion du monde d'échecs Garry Kasparov lors d'un match officiel. C'est un tournant symbolique : pour la première fois, une machine surpasse l'humain dans un domaine considéré comme l'apanage de l'intelligence.</p>
+                    
+                    <h4>🔍 Comment Deep Blue fonctionnait ?</h4>
+                    <ul>
+                        <li>Capacité de calcul brute : 200 millions de positions évaluées par seconde</li>
+                        <li>Base de données de milliers de parties d'échecs</li>
+                        <li>Algorithmes d'évaluation de positions</li>
+                        <li>Pas d'apprentissage : programmation classique et force de calcul</li>
+                    </ul>
+                    
+                    <h4>💡 Impact culturel</h4>
+                    <p>Cette victoire a créé un électrochoc : si l'IA peut battre les humains aux échecs, quels domaines sont encore "sûrs" ? Questions de redéfinition des compétences humaines valorisables.</p>
+                    
+                    <h4>🏫 Et en classe ?</h4>
+                    <p>Comment maintenir la motivation des élèves quand l'IA excelle ? En redirigeant vers des compétences irremplaçables : créativité, collaboration, empathie, résolution de problèmes complexes et multidimensionnels.</p>
+                `
+            },
+            watson: {
+                icon: '🎮',
+                title: 'Watson - L\'IA culturelle',
+                year: '2011',
+                content: `
+                    <h4>📖 Contexte historique</h4>
+                    <p>En février 2011, Watson, le système d'intelligence artificielle d'IBM, affronte deux champions humains au jeu télévisé américain "Jeopardy!" et remporte la victoire. Contrairement aux échecs, Jeopardy! nécessite la compréhension du langage naturel, de la culture générale et de l'humour.</p>
+                    
+                    <h4>🔍 Les défis relevés par Watson</h4>
+                    <ul>
+                        <li>Traitement du langage naturel (avec jeux de mots et double sens)</li>
+                        <li>Recherche dans des millions de documents en quelques secondes</li>
+                        <li>Évaluation de la confiance dans ses réponses</li>
+                        <li>Gestion du timing (buzzer rapide)</li>
+                    </ul>
+                    
+                    <h4>💡 Au-delà du jeu</h4>
+                    <p>Après Jeopardy!, Watson a été appliqué à la médecine (aide au diagnostic), au droit, à la finance... montrant que l'IA peut traiter l'information et proposer des réponses, mais peut-elle vraiment "comprendre" ?</p>
+                    
+                    <h4>🏫 Et en classe ?</h4>
+                    <p>Watson peut donner la bonne réponse rapidement, mais peut-il argumenter ? Nuancer ? Créer ? L'enjeu éducatif : aller au-delà de la mémorisation et de la restitution pour valoriser le raisonnement, l'esprit critique et la création de sens.</p>
+                `
+            },
+            alphago: {
+                icon: '🎯',
+                title: 'AlphaGo - Le deep learning triomphe',
+                year: '2016',
+                content: `
+                    <h4>📖 Contexte historique</h4>
+                    <p>En mars 2016, AlphaGo (développé par DeepMind, Google) bat Lee Sedol, l'un des meilleurs joueurs mondiaux de Go. Le Go est un jeu réputé inabordable pour les IA en raison de sa complexité combinatoire (plus de possibilités que d'atomes dans l'univers).</p>
+                    
+                    <h4>🔍 La révolution du deep learning</h4>
+                    <ul>
+                        <li>Apprentissage par réseaux de neurones profonds</li>
+                        <li>Entraînement sur des millions de parties</li>
+                        <li>Auto-apprentissage : AlphaGo joue contre lui-même pour s'améliorer</li>
+                        <li>Intuition artificielle : l'IA "sent" les bons coups sans tout calculer</li>
+                    </ul>
+                    
+                    <h4>💡 Un coup historique</h4>
+                    <p>Lors de la partie 2, AlphaGo joue le "coup 37", un coup jugé "magnifique" mais impossible à comprendre sur le moment. Il révèle une forme de créativité artificielle qui dépasse l'humain.</p>
+                    
+                    <h4>🏫 Et en classe ?</h4>
+                    <p>AlphaGo apprend par la masse de données. Cela soulève la question éthique : d'où viennent ces données ? Comment sensibiliser les élèves à la protection de leurs données personnelles et aux biais que peuvent contenir les algorithmes ?</p>
+                `
+            },
+            generative: {
+                icon: '🚀',
+                title: 'L\'explosion des IA génératives',
+                year: '2022',
+                content: `
+                    <h4>📖 Contexte historique</h4>
+                    <p>À partir de 2022, les IA génératives (ChatGPT, DALL-E, MidJourney, Stable Diffusion...) deviennent accessibles au grand public. Ces outils peuvent générer du texte, des images, du code, de la musique... à partir de simples instructions en langage naturel.</p>
+                    
+                    <h4>🔍 Qu'est-ce qui a changé ?</h4>
+                    <ul>
+                        <li>Démocratisation : tout le monde peut y accéder gratuitement ou presque</li>
+                        <li>Multimodalité : texte, image, son, vidéo...</li>
+                        <li>Qualité impressionnante : souvent indiscernable d'une production humaine</li>
+                        <li>Rapidité : en quelques secondes, création de contenus complexes</li>
+                    </ul>
+                    
+                    <h4>💡 Impact immédiat sur l'éducation</h4>
+                    <p>Les enseignants se retrouvent confrontés à de nouvelles questions :</p>
+                    <ul>
+                        <li>Comment évaluer un travail écrit quand ChatGPT peut le produire ?</li>
+                        <li>Comment détecter le plagiat assisté par IA ?</li>
+                        <li>Faut-il interdire ou intégrer ces outils ?</li>
+                        <li>Quelles compétences développer chez les élèves ?</li>
+                    </ul>
+                    
+                    <h4>🏫 Et en classe ?</h4>
+                    <p>Plutôt que de voir l'IA comme une menace, comment l'intégrer comme un outil pédagogique ? Comment former à l'usage éthique et critique de ces technologies ? Comment repenser l'évaluation pour valoriser l'authenticité, la créativité et l'esprit critique ?</p>
+                `
+            }
+        };
+
+        let draggedElement = null;
+        const answers = {};
+        let timelineCompleted = false;
+        let reflectionCompleted = false;
+        let selectedEvent = null;
+        const matchingAnswers = {};
+
+        document.querySelectorAll('.draggable').forEach(card => {
+            card.addEventListener('dragstart', function(e) {
+                draggedElement = this;
+                this.classList.add('dragging');
+                e.dataTransfer.effectAllowed = 'move';
+            });
+
+            card.addEventListener('dragend', function() {
+                this.classList.remove('dragging');
+            });
+        });
+
+        document.querySelectorAll('.drop-area').forEach(zone => {
+            zone.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                this.classList.add('over');
+            });
+
+            zone.addEventListener('dragleave', function() {
+                this.classList.remove('over');
+            });
+
+            zone.addEventListener('drop', function(e) {
+                e.preventDefault();
+                this.classList.remove('over');
+                
+                if (draggedElement) {
+                    const year = this.dataset.year;
+                    const eventYear = draggedElement.dataset.year;
+                    
+                    // Si la zone est déjà remplie, on remet la carte précédente dans la zone de cartes
+                    if (this.classList.contains('filled')) {
+                        const oldYear = this.dataset.currentYear;
+                        const oldCard = document.querySelector(`.draggable[data-year="${oldYear}"]`);
+                        if (oldCard) {
+                            oldCard.classList.remove('placed');
+                        }
+                    }
+                    
+                    this.innerHTML = draggedElement.innerHTML;
+                    this.classList.add('filled');
+                    this.dataset.currentYear = eventYear;
+                    draggedElement.classList.add('placed');
+                    answers[year] = eventYear;
+                }
+            });
+
+            // Permettre de reprendre une carte depuis une zone de dépôt
+            zone.addEventListener('click', function() {
+                if (this.classList.contains('filled')) {
+                    const year = this.dataset.currentYear;
+                    const card = document.querySelector(`.draggable[data-year="${year}"]`);
+                    if (card) {
+                        card.classList.remove('placed');
+                    }
+                    this.innerHTML = 'Déposez ici';
+                    this.classList.remove('filled');
+                    delete answers[this.dataset.year];
+                    delete this.dataset.currentYear;
+                }
+            });
+        });
+
+        function checkAnswers() {
+            let correct = 0;
+            let total = 7;
+            
+            for (let year in answers) {
+                if (answers[year] === year) {
+                    correct++;
+                }
+            }
+
+            const result = document.getElementById('result');
+            
+            if (correct === total) {
+                result.className = 'result success';
+                result.innerHTML = '🎉 Parfait ! Vous avez correctement reconstitué la frise chronologique ! Passez maintenant à la partie réflexion ci-dessous.';
+                timelineCompleted = true;
+                
+                setTimeout(() => {
+                    document.getElementById('reflectionSection').classList.add('visible');
+                    document.getElementById('reflectionSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 1000);
+            } else {
+                result.className = 'result error';
+                result.innerHTML = `🤔 Vous avez ${correct} réponses correctes sur ${total}. Réessayez ! Indice : pensez à l'ordre chronologique de l'évolution technologique.`;
+            }
+        }
+
+        // Système de matching pour la partie 2
+        let selectedEventCard = null;
+        let pairCounter = 0;
+        const pairColors = ['paired-1', 'paired-2', 'paired-3', 'paired-4', 'paired-5', 'paired-6'];
+        const eventToPairColor = {};
+        
+        document.querySelectorAll('.event-card').forEach(card => {
+            card.addEventListener('click', function() {
+                // Si on clique sur le bouton info, on ne sélectionne pas la carte
+                if (event.target.classList.contains('info-btn')) {
+                    return;
+                }
+                
+                document.querySelectorAll('.event-card').forEach(c => c.classList.remove('selected'));
+                this.classList.add('selected');
+                selectedEvent = this.dataset.event;
+                selectedEventCard = this;
+            });
+        });
+
+        function selectQuestion(questionEl) {
+            if (!selectedEvent) {
+                alert('⚠️ Sélectionnez d\'abord un événement historique (colonne de gauche)');
+                return;
+            }
+
+            // Si cet événement était déjà associé, on retire l'ancienne couleur
+            if (eventToPairColor[selectedEvent]) {
+                const oldColor = eventToPairColor[selectedEvent];
+                selectedEventCard.classList.remove(oldColor);
+                // Retirer aussi l'ancienne question associée
+                document.querySelectorAll('.question-match').forEach(q => {
+                    if (q.classList.contains(oldColor) && q !== questionEl) {
+                        q.classList.remove(oldColor);
+                    }
+                });
+            } else {
+                // Nouvelle paire : on lui attribue une couleur
+                eventToPairColor[selectedEvent] = pairColors[pairCounter % pairColors.length];
+                pairCounter++;
+            }
+
+            // Appliquer la couleur à la paire
+            const color = eventToPairColor[selectedEvent];
+            selectedEventCard.classList.add(color);
+            
+            // Retirer toutes les classes de couleur de la question avant d'en ajouter une nouvelle
+            questionEl.classList.remove(...pairColors);
+            questionEl.classList.add(color);
+
+            // Enregistrer l'association
+            matchingAnswers[selectedEvent] = questionEl.dataset.answer;
+            
+            // Feedback visuel - garder la question sélectionnée
+            questionEl.classList.add('selected');
+            
+            // Désélectionner l'événement
+            if (selectedEventCard) {
+                selectedEventCard.classList.remove('selected');
+            }
+            selectedEvent = null;
+            selectedEventCard = null;
+        }
+
+        function checkMatching() {
+            const correctAnswers = {
+                'turing': 'turing',
+                'eliza': 'eliza',
+                'deepblue': 'deepblue',
+                'watson': 'watson',
+                'alphago': 'alphago',
+                'generative': 'generative'
+            };
+
+            let correct = 0;
+            let total = 6;
+
+            document.querySelectorAll('.question-match').forEach(q => {
+                q.classList.remove('correct', 'incorrect');
+            });
+
+            for (let event in matchingAnswers) {
+                if (matchingAnswers[event] === correctAnswers[event]) {
+                    correct++;
+                    const questionEl = document.querySelector(`.question-match[data-answer="${matchingAnswers[event]}"]`);
+                    if (questionEl) questionEl.classList.add('correct');
+                } else {
+                    const questionEl = document.querySelector(`.question-match[data-answer="${matchingAnswers[event]}"]`);
+                    if (questionEl) questionEl.classList.add('incorrect');
+                }
+            }
+
+            const result = document.getElementById('matchingResult');
+            
+            if (correct === total) {
+                result.className = 'result success';
+                result.innerHTML = '🎉 Excellent ! Vous avez bien compris les liens entre l\'histoire de l\'IA et les enjeux pédagogiques actuels !';
+                
+                setTimeout(() => {
+                    document.getElementById('synthesisSection').style.display = 'block';
+                    document.getElementById('synthesisSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }, 1000);
+            } else {
+                result.className = 'result error';
+                result.innerHTML = `🤔 ${correct} associations correctes sur ${total}. Les cases vertes sont correctes, les rouges à revoir. Cliquez sur les cases rouges puis sur le bon événement pour corriger.`;
+            }
+        }
+
+        function validateReflection() {
+            const synthesisText = document.getElementById('collectiveSynthesis').value.trim();
+            
+            if (synthesisText.length > 30) {
+                reflectionCompleted = true;
+                
+                // Afficher le bouton copier
+                document.getElementById('copyButton').style.display = 'block';
+                
+                if (timelineCompleted && reflectionCompleted) {
+                    document.getElementById('bilanSection').classList.add('visible');
+                    document.getElementById('bilanSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            } else {
+                alert('⚠️ Veuillez compléter votre synthèse (minimum 30 caractères).');
+            }
+        }
+
+        function copyToClipboard() {
+            const synthesisText = document.getElementById('collectiveSynthesis').value.trim();
+            const fullText = `« Avec l'émergence des IA génératives, nous devons, en tant qu'enseignants, faire face à ${synthesisText}`;
+            
+            navigator.clipboard.writeText(fullText).then(() => {
+                // Afficher le feedback
+                document.getElementById('copyFeedback').style.display = 'block';
+                
+                // Changer temporairement le texte du bouton
+                const btn = document.getElementById('copyButton');
+                const originalText = btn.innerHTML;
+                btn.innerHTML = '✅ Copié !';
+                btn.style.background = 'linear-gradient(135deg, #20c997, #17a2b8)';
+                
+                setTimeout(() => {
+                    btn.innerHTML = originalText;
+                    btn.style.background = 'linear-gradient(135deg, #28a745, #20c997)';
+                }, 2000);
+            }).catch(err => {
+                alert('Erreur lors de la copie. Veuillez sélectionner et copier manuellement le texte.');
+            });
+        }
+
+        // Système de modal pour les détails
+        function openModal(eventKey) {
+            const modal = document.getElementById('infoModal');
+            const content = document.getElementById('modalContent');
+            const event = eventDetails[eventKey];
+            
+            content.innerHTML = `
+                <div class="modal-header">
+                    <div class="modal-icon">${event.icon}</div>
+                    <div class="modal-title">
+                        <h3>${event.title}</h3>
+                        <div class="year">${event.year}</div>
+                    </div>
+                </div>
+                <div class="modal-body">
+                    ${event.content}
+                </div>
+            `;
+            
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('infoModal');
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Fermer la modal en cliquant en dehors
+        document.getElementById('infoModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
+            }
+        });
+
+        // Fermer avec la touche Échap
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>
